@@ -1,0 +1,54 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define ITERATION 1
+#define SIZE 2
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+#include"header.h"
+
+int main()
+{
+    for (int j = 0; j < ITERATION; j++)
+    {
+        double* matrix = (double*)malloc(SIZE * SIZE * sizeof(double));
+
+        for (int i = 0; i < SIZE * SIZE; i++)    //инициализация массива
+        {
+            //scanf_s("%d", &matrix[i]);
+            if (matrix != NULL) {
+                matrix[i] = i;
+            }
+            if (i % SIZE == 0)
+            {
+                printf("\n");
+            }
+            if (matrix != NULL) {
+                printf("%f\t", matrix[i]);
+            }
+        }
+        double result;///*
+        result = determinant(matrix, SIZE);
+        printf("\n\nDeterminant 1 is %lf\n", result);
+        //*/
+
+        TriangleMatrix(matrix, SIZE);
+        TriangleMatrix(matrix, SIZE);/*
+        for(int i = 0; i < SIZE * SIZE; i++)
+        {
+            if (i % SIZE == 0)
+            {
+                printf("\n");
+            }
+            if (matrix != NULL) {
+                printf("%f\t", matrix[i]);
+            }
+        }*/
+
+        result = GaussDeterminant(matrix, SIZE);
+        result = roundl(result);
+        printf("\n\nDeterminant 2 is %lf\n", result);
+
+        free(matrix);
+    }
+    return 0;
+}
