@@ -1,0 +1,17 @@
+#pragma once
+
+struct Rational;
+
+double determinant(double* matrix, unsigned int size);
+
+double GaussDeterminant(double* matrix, int size);
+
+double D2Arr(double* arr);
+
+void GetCofactor(double* matrix, double* cofactor, int line, int size);
+
+void TriangleMatrix(double* matrix, int size);
+
+void StringSwap(double* string1, double* string2, int size);
+
+void DoubleToRational(double* matrix, Rational* arr, int size);
