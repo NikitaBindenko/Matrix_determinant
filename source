@@ -1,0 +1,221 @@
+#include"header.h"
+#include<math.h>
+#include<stdlib.h>
+
+double determinant(double* matrix, unsigned int num)
+{
+    const unsigned int size = num;
+    if (size == 1)
+    {
+        double output = matrix[0];
+        return output;
+    }
+
+    if (size == 2)
+    {
+        int output = D2Arr(matrix);
+        return output;
+    }
+
+    double k = 0;
+    unsigned int i = 0, j = 0, m = 0, n = 0;
+    double* cofactor = (double*)malloc((size - 1) * (size - 1) * sizeof(double));
+    double* mltp = (double*)malloc(size * sizeof(double));
+    double* add = (double*)malloc(size * sizeof(double));
+
+    for (k = 0; k < size; k++)
+    {
+        if (mltp != NULL)
+        {
+            mltp[j] = matrix[i] * (int)pow(-1, (k + 2));
+        }
+        i = i + size;
+        j++;
+    }
+    i = 0;
+
+    for (m = 0; m < size; m++)
+    {
+        GetCofactor(matrix, cofactor, m, size);
+        if (mltp != NULL) 
+        {
+            if (add != NULL) {   
+                add[m] = mltp[m] * determinant(cofactor, size - 1);
+            }
+        }
+    }
+    m = 0;
+
+    double output = 0;
+    for (m = 0; m < size; m++)
+    {
+        if (add != NULL) {
+            output = output + add[m];
+        }
+    }
+
+    free(cofactor);
+    free(add);
+    free(mltp);
+
+    return output;
+}
+
+double D2Arr(double* arr)
+{
+    int determinant = arr[0] * arr[3] - arr[1] * arr[2];
+    return determinant;
+}
+void GetCofactor(double* matrix, double* cofactor, int line, int size)
+{
+    int i = 0;
+    for (int e = 0; e < size * size; e++)
+    {
+        if (e % size != 0)
+        {
+            if (e < line * size || e >(line + 1)* size)
+            {
+                cofactor[i] = matrix[e];
+                i++;
+            }
+        }
+    }
+}
+
+void TriangleMatrix(double* matrix, int size)
+{
+    double* pivstr = matrix;
+    double* str = matrix;
+    for (int i = 0; i < size - 1; i++)  //каждая итерация добавляет столбик нулей ниже главной диагонали
+    {
+        double* pivstr = matrix;
+        double* str = matrix;
+
+        double piv = matrix[(i * size) + i];   //выбор опорного элемента
+        pivstr = &pivstr[i * size];  //получение адреса опорной строки  здесь возможно ошибка   можно попробовать pivstr = &piv[%
+        str = &str[i * size];
+
+        for (int j = 1 + i; j < size; j++)  //каждая итерация прибавляет к строке опорную строку умноженную на константу
+        {
+            float mltp = -(matrix[( j * size) + i ] / piv);    //вычисление множителя для конкретной строки       
+            str = &str[size];
+            for (int m = 0; m < size; m++)  //каждая итерация складывает элемент с соответствующим элементом опорной строки, умноженным на константу
+            {
+                str[m] = str[m] + pivstr[m] * mltp;
+            }
+        }
+    }
+}
+
+void StringSwap(double* str1, double* str2, int size)
+{
+    double temp;
+    for (int i = 0; i < size; i++)
+    {
+        temp = str1[i];
+        str1[i] = str2[i];
+        str2[i] = temp;
+    }
+}
+
+double GaussDeterminant(double* matrix, int size)
+{
+    double sum = 1;
+    for (int i = 0; i < size; i++)
+    {
+        if (matrix[(i * size) + i] != 0 && size != 2)
+        {
+            sum = sum * matrix[(i * size) + i];
+        }
+        else if(matrix[(i * size) + i] == 0 && size != 2)
+        {
+            return 0;
+        }
+        else
+        {
+            return -2;
+        }
+    }
+    return sum;
+}
+
+struct Rational
+{
+private:
+    double val;
+public:
+    Rational() :nom(0), denom(1) {};
+    void plus(Rational a)
+    {
+        double m = (nom * a.nom) / CommonDivisor(nom, a.nom);
+        double n = (denom * a.denom) / CommonDivisor(denom, a.denom);
+        double CommonDenom = (m * n) / CommonDivisor(m, n);	//вычисление знаменателя
+        if (CommonDenom < 0)
+        {
+            CommonDenom = CommonDenom * -1;
+        }
+
+        nom = nom * (CommonDenom / denom);	//приведение к общему знаменателю
+        a.nom = a.nom * (CommonDenom / a.denom);
+
+        nom = nom + a.nom;	//сложение числителей
+        denom = CommonDenom;	//знамениатель равен общему знаменателю
+
+        m = nom;
+        nom = nom / CommonDivisor(nom, denom);	//сокращение
+        denom = denom / CommonDivisor(m, denom);
+
+        val = nom / denom;
+    };
+
+    void multiply(Rational a)
+    {
+        nom = nom * a.nom;	//умножение числителя
+        denom = denom * a.denom;	//умножение знаменателя
+
+        double m = nom;
+        nom = nom / CommonDivisor(nom, denom);	//сокращение
+        denom = denom / CommonDivisor(m, denom);
+
+        val = nom / denom;
+    };
+
+    void divide(Rational a)
+    {
+        nom = nom * a.denom;
+        denom = denom * a.nom;
+
+        double m = nom;
+        nom = nom / CommonDivisor(nom, denom);	//сокращение
+        denom = denom / CommonDivisor(m, denom);
+
+        val = nom / denom;
+    }
+
+    double CommonDivisor(int a, int b)
+    {
+        if (a < 0)
+        {
+            a = a * -1;
+        }
+        if (b < 0)
+        {
+            b = b * -1;
+        }
+        while (a != 0 && b != 0)
+        {
+            if (a > b)
+            {
+                a = a % b;
+            }
+            else
+            {
+                b = b % a;
+            }
+        }
+        return(a + b);
+    }
+
+public:
+    double nom, denom;
+};
